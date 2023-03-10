@@ -1,72 +1,72 @@
-#include "main.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <stdbool.h>
+
 
 /**
- * coinConverter - Helper function that does all the mathematics
- * @i: Passed in variable from main for calculations
- * Return: The number of coins needed minimum for the passed in variable
+ * _isnumber - checks if string is a number
+ * @s: string
+ *
+ * Return: On success 1.
+ * If not a number, 0 is returned.
  */
-int coinConverter(int i)
+int _isnumber(char *s)
 {
-	int count = 0;
+	int i, check, d;
 
-	while (i != 0)
+	i = 0, d = 0, check = 1;
+	if (*s == '-')
+		i++;
+	for (; *(s + i) != 0; i++)
 	{
-		if (i % 10 == 9 || i % 10 == 7)
-			i -= 2;
-		else if (i % 25 == 0)
-			i -= 25;
-		else if (i % 10 == 0)
-			i -= 10;
-		else if (i % 5 == 0)
-			i -= 5;
-		else if (i % 2 == 0)
+		d = isdigit(*(s + i));
+		if (d == 0)
 		{
-			if (i % 10 == 6)
-				i -= 1;
-			else
-				i -= 2;
+			check = 0;
+			break;
 		}
-		else
-			i -= 1;
-
-		count++;
 	}
-
-	return (count);
+	return (check);
 }
-
 /**
- * main - Takes in exactly one argument for minimum coin count
- * @argc: Number of command line arguments
- * @argv: Array name
- * Return: 0 if exactly 1 argument is passed into this program, 1 otherwise
+ * main - Entry point
+ *
+ * @argc: Counts the number of parameters that go into main
+ * @argv: Pointer of array of pointers containing strings entering main
+ * Return: Always 0 (Success)
  */
-int main(int argc, char *argv[])
+int main(int argc, char **argv)
 {
-	int i, coin;
+	int j, ex, coins, cents, d;
+	int c[5] = {25, 10, 5, 2, 1};
 
-	coin = 0;
-
-	if (argc != 2)
+	ex = 1, j = 0, coins = 0;
+	if (argc == 2)
 	{
-		printf("Error\n");
-		return (1);
+		if (_isnumber(argv[1]))
+		{
+			ex = 0, cents = atoi(argv[1]);
+			if (cents >= 0)
+			{
+				while (cents != 0)
+				{
+					d = cents / c[j];
+					if (d == 0)
+					{
+						j++;
+					}
+					else
+					{
+						coins += d;
+						cents -= (d * c[j]);
+					}
+				}
+			}
+		}
 	}
-
-	i = atoi(argv[1]);
-
-	if (i < 0)
-		printf("0\n");
+	if (ex == 0)
+		printf("%i\n", coins);
 	else
-	{
-		coin = coinConverter(i);
-
-		printf("%d\n", coin);
-	}
-
-	return (0);
+		printf("%s\n", "Error");
+	return (ex);
 }
