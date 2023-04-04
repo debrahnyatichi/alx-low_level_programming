@@ -9,16 +9,17 @@
 
 int pop_listint(listint_t **head)
 {
-	listint_t *popped;
-	int content;
+	int data;
+	listint_t *temp;
 
-	if (*head == NULL)
-		return (0);
+	if (head == NULL || *head == NULL)
+	{
+		return (0);  /* The list is empty */
+	}
 
-	popped = *head;
-	content = popped->n;
-	free(popped);
-
-	*head = (*head)->next;
-	return (content);
+	temp = *head;  /* Save the current head node */
+	data = temp->n;  /* Get the data of the head node */
+	*head = temp->next;  /* Make the next node the new head */
+	free(temp);  /* Free the memory of the old head node */
+	return (data);
 }
