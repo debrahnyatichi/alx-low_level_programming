@@ -1,96 +1,42 @@
-#include "lists.h"
-
-size_t looped_listint_count(listint_t *head);
-size_t free_listint_safe(listint_t **h);
+#include <stdlib.h>
 
 /**
- * looped_listint_count - Counts the number of unique nodes
- *                      in a looped listint_t linked list.
- * @head: A pointer to the head of the listint_t to check.
+ * free_listint_safe - frees a listint_t linked list safely
+ * @h: double pointer to the head of the list
  *
- * Return: If the list is not looped - 0.
- *         Otherwise - the number of unique nodes in the list.
- */
-size_t looped_listint_count(listint_t *head)
-{
-	listint_t *tortoise, *hare;
-	size_t nodes = 1;
-
-	if (head == NULL || head->next == NULL)
-		return (0);
-
-	tortoise = head->next;
-	hare = (head->next)->next;
-
-	while (hare)
-	{
-		if (tortoise == hare)
-		{
-			tortoise = head;
-			while (tortoise != hare)
-			{
-				nodes++;
-				tortoise = tortoise->next;
-				hare = hare->next;
-			}
-
-			tortoise = tortoise->next;
-			while (tortoise != hare)
-			{
-				nodes++;
-				tortoise = tortoise->next;
-			}
-
-			return (nodes);
-		}
-
-		tortoise = tortoise->next;
-		hare = (hare->next)->next;
-	}
-
-	return (0);
-}
-
-/**
- * free_listint_safe - Frees a listint_t list safely (ie.
- *                     can free lists containing loops)
- * @h: A pointer to the address of
- *     the head of the listint_t list.
+ * This function frees a linked list of type listint_t in a safe manner, i.e.,
+ * by going through the list only once and setting each node's next pointer to
+ * NULL before freeing it. The function also sets the head to NULL after all
+ * the nodes have been freed.
  *
- * Return: The size of the list that was freed.
- *
- * Description: The function sets the head to NULL.
+ * Return: the size of the list that was free'd
  */
 size_t free_listint_safe(listint_t **h)
 {
-	listint_t *tmp;
-	size_t nodes, index;
+	size_t size = 0;
+	listint_t *current, *next;
 
-	nodes = looped_listint_count(*h);
+	if (h == NULL || *h == NULL)
+		return (0);
 
-	if (nodes == 0)
+	current = *h;
+	*h = NULL;  /* set head to NULL before freeing */
+
+	while (current != NULL)
 	{
-		for (; h != NULL && *h != NULL; nodes++)
+		size++;
+		next = current->next;
+		current->next = NULL;  /* set next pointer to NULL before freeing */
+		free(current);
+		current = next;
+
+		/* check for a loop in the list */
+		if (next != NULL && next >= current)
 		{
-			tmp = (*h)->next;
-			free(*h);
-			*h = tmp;
+			size++;
+			break;
 		}
 	}
 
-	else
-	{
-		for (index = 0; index < nodes; index++)
-		{
-			tmp = (*h)->next;
-			free(*h);
-			*h = tmp;
-		}
-
-		*h = NULL;
-	}
-
-	h = NULL;
-
-	return (nodes);
+	return (size);
 }
