@@ -9,7 +9,6 @@
 
 int clear_bit(unsigned long int *n, int index)
 {
-	int n;
 	unsigned long int fent = 0;
 
 	if (index > 63)
