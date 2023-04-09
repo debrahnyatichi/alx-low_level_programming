@@ -10,27 +10,17 @@
 
 unsigned int binary_to_uint(const char *b)
 {
-	if (b == NULL)
-	{/* handle null pointer */
-		return (0);
-	}
-
+	int c;
 	unsigned int result = 0;
 
-	for (const char *p = b; *p != '\0'; p++)
+	if (!b)
+		return (0);
+
+	for (c = 0; b[c]; c++)
 	{
-		if (*p == '0')
-		{
-			result << = 1;
-		}
-		else if (*p == '1')
-		{
-			result = (result << 1) | 1;
-		}
-		else
-		{
+		if (b[c] < '0' || b[c] > '1')
 			return (0);
-		}
+		result = 2 * result + (b[c] - '0');
 	}
 	return (result);
 }
